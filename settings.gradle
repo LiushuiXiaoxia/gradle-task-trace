@@ -1,0 +1,65 @@
+pluginManagement {
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/public/' }
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/public/' }
+        google()
+        mavenCentral()
+    }
+}
+rootProject.name = "gradle-task-trace"
+
+def tv = System.getenv("TRACE_VERSION")
+if (TRACE_DEV.toBoolean()) {
+    if (tv != null && tv.length() > 0) {
+        logger.error("xtrace release mode")
+    } else {
+        includeBuild('xtrace')
+        logger.error("xtrace dev mode")
+    }
+
+    gradle.beforeProject { Project it ->
+        if (it == it.rootProject) {
+            if (tv != null && tv.length() > 0) {
+                it.buildscript.dependencies.classpath("cn.mycommons:xtrace:$tv")
+            } else {
+                it.buildscript.dependencies.classpath("cn.mycommons:xtrace")
+            }
+            logger.error("inject xtrace success 111")
+        }
+    }
+
+    gradle.afterProject { Project it ->
+        if (it == it.rootProject) {
+            if (!it.pluginManager.hasPlugin("xtrace")) {
+                it.pluginManager.apply("xtrace")
+                logger.error("inject xtrace success 222")
+            }
+        }
+    }
+}
+
+include ':app'
+includeBuild("libs-include/include-lib-01")
+includeBuild("libs-include/include-lib-02")
+
+def libs = file("libs")
+if (libs.exists()) {
+    def list = libs.list()
+    Arrays.sort(list)
+    for (String name : list) {
+        def build = new File(libs, name + "/build.gradle")
+        if (name.contains("lib") && build.exists()) {
+            def libName = ":libs:$name"
+            logger.info("include lib project -> $libName")
+            include(libName)
+        }
+    }
+}

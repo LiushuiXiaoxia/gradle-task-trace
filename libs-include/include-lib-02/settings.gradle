@@ -1,0 +1,6 @@
+rootProject.name = "include-lib-02"
+
+if (gradle.parent == null) {
+    include ':app'
+}
+include ':ic-lib-02'

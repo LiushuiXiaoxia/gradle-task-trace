@@ -1,0 +1,8 @@
+rootProject.ext {
+
+    kotlin_version = "1.7.20"
+
+    minSdkVersion = 24
+    compileSdkVersion = 33
+    targetSdkVersion = 33
+}

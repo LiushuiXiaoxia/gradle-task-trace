@@ -1,0 +1,26 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/public/' }
+        // maven { url "https://jcenter.bintray.com/" }
+        mavenLocal()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:$version_build_gradle"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    group "com.example.ic-01"
+
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/public/' }
+        mavenLocal()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+apply from: 'bconfig.gradle'
